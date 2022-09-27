@@ -1,0 +1,57 @@
+{%extends "base.html" %}
+{%block content%}
+<!-- First Grid -->
+<div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+      <div class="w3-twothird">
+        <h1 class="w3-padding-32">Recipe Search Returned {{ retrieved_recipes }} Results: </h1>
+        <p class="w3-text-grey">Search Pattern: </p>
+        {% for key, value in search_params.items() %}
+            <p class="w3-text-grey">{{ key }} : {{ value }}</p>
+        {% endfor %}
+      </div>
+      <hr>
+      {% if retrieved_recipes > 0 %}
+        <div class="w3-third w3-center">
+          <i class="fa fa-birthday-cake w3-padding-64 w3-text-green w3-margin-right"></i>
+        </div>
+      {% else %}
+        <div class="w3-third w3-center">
+          <i class="fa fa-frown-o w3-padding-64 w3-text-red w3-margin-right"></i>
+        </div>
+      {% endif %}  
+    </div>
+  </div>
+{% for recipe in recipes %}
+<div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+      <div class="w3-twothird">
+            <h1 class="w3-padding-32">{{ recipe.recipe_name }}</h5>
+            <p class="w3-text-grey">Servings: {{ recipe.servings }}</p>
+            <p class="w3-text-grey">Prep Time: {{ recipe.prep_time }}</p>
+            <p class="w3-text-grey">Total Cook Time: {{ recipe.cook_time }}</p>
+            <hr>
+            <h1 class="w3-padding-32">Ingredients List</h5>
+            <table>
+                <tbody>
+                    {% for ingredient in recipe.ingredients %}
+                        <tr>
+                            <td>{{ ingredient }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <hr>
+        <div class="w3-twothird">
+            <h1 class="w3-padding-32">Instructions</h1>
+            <p class="w3-text-grey">{{ recipe.directions }}</p>
+        </div>
+        <div class="w3-twothird">
+            <h1 class="w3-padding-32">Notes</h1>
+            <p class="w3-text-grey">{{ recipe.notes }}</p>
+        </div>
+    </div>
+  </div>
+  {% endfor %}
+{% endblock %}

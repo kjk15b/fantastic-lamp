@@ -1,0 +1,110 @@
+{%extends "base.html" %}
+{%block content%}
+  
+<style>
+    * {
+  box-sizing: border-box;
+}
+input[type=text], select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+label {
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+}
+input[type=submit] {
+  background-color: #04AA6D;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+}
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+.container {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+.col-25 {
+  float: left;
+  width: 25%;
+  margin-top: 6px;
+}
+.col-75 {
+  float: left;
+  width: 75%;
+  margin-top: 6px;
+}
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .col-25, .col-75, input[type=submit] {
+    width: 100%;
+    margin-top: 0;
+  }
+}
+</style>
+
+<!-- First Grid -->
+<div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+        <h1>Search for a New Recipe</h1>
+        <p class="w3-text-grey">Add parameters to search for recipes. If not parameters are input, all recipes are retrieved.</p>
+        <p class="w3-text-grey">Please enter ingredients as a comma separated list: bacon, lettuce, tomato.</p>
+        <div class="container">
+            <form action="/recipes/search/results" method="post">
+            <div class="row">
+              <div class="col-25">
+                <label for="servings">Servings</label>
+              </div>
+              <div class="col-75">
+                <input type="number" id="servings" name="servings" placeholder="4">
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                  <label for="recipe_name">Preparation Time</label>
+                </div>
+                <div class="col-75">
+                  <input type="text" id="prep_time" name="prep_time" placeholder="15min">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                  <label for="recipe_name">Cook Time (Total Time)</label>
+                </div>
+                <div class="col-75">
+                  <input type="text" id="cook_time" name="cook_time" placeholder="3hr55min">
+                </div>
+            </div>
+            <div class="row">
+              <div class="col-25">
+                <label for="subject">Ingredients</label>
+              </div>
+              <div class="col-75">
+                <textarea id="ingredients" name="ingredients" placeholder="Cucumbers, lettuce, tomato, onion,..." style="height:200px"></textarea>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <input type="submit" value="Submit">
+            </div>
+            </form>
+          </div>
+    </div>
+  </div>
+  
+{% endblock %}
