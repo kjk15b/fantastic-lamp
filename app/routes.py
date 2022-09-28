@@ -151,25 +151,7 @@ def api_update_recipe():
 		print(request.form.to_dict())
 		recipe_d = request.form.to_dict()
 		processed_req = process_recipe_form(recipe_d)
-		recipe = Recipe.query.filter_by(recipe_name=recipe_d['old_recipe_name']).first()
-		'''
-		print(recipe)
-		print(type(recipe))
-		print("Before")
-		print(recipe)
-		print(10*"-")
-		recipe.recipe_name = recipe_d['recipe_name']
-		recipe.servings = recipe_d['servings']
-		recipe.cook_time = recipe_d['cook_time']
-		recipe.ingredients = processed_req['ingredients'],
-		recipe.directions = processed_req['directions'],
-		recipe.notes = request.form['notes']
-		print("After")
-		print(recipe)
-		db.session.merge(recipe)
-		db.session.commit()
-		'''
-		f=db.session.query(Recipe). \
+		db.session.query(Recipe). \
 			filter(Recipe.recipe_name == str(recipe_d['old_recipe_name'])). \
 			update({
 				'recipe_name' : recipe_d['recipe_name'],
