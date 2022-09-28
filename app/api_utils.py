@@ -17,6 +17,10 @@ def to_dict(recipe : Recipe):
     }
     return recipe_dict
 
+def directions_to_list(dir_str : str):
+    dir_list = dir_str.split(',')
+    return dir_list
+
 
 def search_recipe(search_args : dict):
     recipes = Recipe.query.all()
@@ -26,6 +30,7 @@ def search_recipe(search_args : dict):
         search_ingredients = search_args['ingredients'].split(',')
     for recipe in recipes:
         recipe_d = to_dict(recipe)
+        recipe_d['directions'] = directions_to_list(recipe_d['directions'])
         ingredient_found = False
         for ingredient in search_ingredients:
             if ingredient.lower() in recipe_d['ingredients'].lower():
@@ -94,3 +99,31 @@ def handle_quote_of_day():
         db.session.add(quote)
         db.session.commit()
         return new_quote
+
+def flatten_list(form_list : list):
+    out_str = ''
+    for i in range(len(form_list)):
+        if i != len(form_list) - 1:
+            out_str += form_list[i]+', '
+        else:
+            out_str += form_list[i]
+    return out_str
+
+def process_recipe_form(recipe_d : dict):
+    keys = recipe_d.keys()
+    ingredient_list, direction_list = [], []
+    for key in keys:
+        split_arg = key.split('_')
+        if split_arg[0] == 'ingredient':
+            ingredient_list.append(recipe_d[key])
+        elif split_arg[0] == 'directions':
+            direction_list.append(recipe_d[key])
+
+    ingredient_list = flatten_list(ingredient_list)
+    direction_list = flatten_list(direction_list)
+    print(ingredient_list)
+    print(direction_list)
+    return {
+        'ingredients' : ingredient_list,
+        'directions' : direction_list
+    }
