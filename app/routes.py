@@ -4,6 +4,14 @@ from app.api_utils import process_recipe_form, to_dict, search_recipe, handle_qu
 from app.models import Project, Recipe
 from app import db
 
+@app.route('/weight')
+@app.route('/weight/add')
+@app.route('/weight/search')
+@app.route('/weight/delete')
+@app.route('/workout')
+@app.route('/workout/add')
+@app.route('/workout/search')
+@app.route('/workout/delete')
 @app.route('/')
 def home():
     return render_template('base.html',
