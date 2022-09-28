@@ -57,7 +57,7 @@ input[type=submit]:hover {
   }
 }
 </style>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <!-- First Grid -->
 <div class="w3-row-padding w3-padding-64 w3-container">
     <div class="w3-content">
@@ -100,16 +100,22 @@ input[type=submit]:hover {
               <div class="col-25">
                 <label for="subject">Ingredients</label>
               </div>
-              <div class="col-75">
-                <textarea id="ingredients" name="ingredients" placeholder="Cucumbers, lettuce, tomato, onion,..." style="height:200px"></textarea>
+              <div class="col-75 container-ingredient">
+                <button type="button" class="add_form_field_ingredient">Add additional Ingredient &nbsp; 
+                  <span style="font-size:16px; font-weight:bold;"></span>
+                </button>
+                <div><input type="text" id="ingredient_1" name="ingredient_1" placeholder="Almonds"></div>
               </div>
             </div>
             <div class="row">
                 <div class="col-25">
                   <label for="subject">Directions</label>
                 </div>
-                <div class="col-75">
-                  <textarea id="directions" name="directions" placeholder="Step 1: abc, Step 2: def..." style="height:200px"></textarea>
+                <div class="col-75 container-directions">
+                  <button class="add_form_field_step">Add additional Step &nbsp; 
+                    <span style="font-size:16px; font-weight:bold;"></span>
+                  </button>
+                  <div><textarea id="directions" name="directions_1" placeholder="Step 1: Do this..." style="height:200px"></textarea></div>
                 </div>
             </div>
             <div class="row">
@@ -128,5 +134,6 @@ input[type=submit]:hover {
           </div>
     </div>
   </div>
-  
+  <script src="/static/add_form.js"></script>
+
 {% endblock %}

@@ -7,7 +7,7 @@
     <div class="w3-content">
       <div class="w3-twothird">
         <h1 class="w3-padding-32">Most Recent Recipe: </h1>
-        <h1 class="w3-padding-32">{{ recipe.recipe_name }}.</h5>
+        <h1 class="w3-padding-32">{{ recipe.recipe_name }}</h5>
         <p class="w3-text-grey">Servings: {{ recipe.servings }}</p>
         <p class="w3-text-grey">Prep Time: {{ recipe.prep_time }}</p>
         <p class="w3-text-grey">Total Cook Time: {{ recipe.cook_time }}</p>
@@ -17,7 +17,7 @@
             <tbody>
                 {% for ingredient in recipe.ingredients %}
                     <tr>
-                        <td>{{ ingredient }}</td>
+                        <td class="w3-text-grey">{{ ingredient }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -26,8 +26,11 @@
       <hr>
       <div class="w3-twothird">
         <h1 class="w3-padding-32">Instructions</h1>
-        <p class="w3-text-grey">{{ recipe.directions }}</p>
-      </div>
+        {% for step in recipe.directions %}
+          <p class="w3-text-grey">{{ step }}</p>
+          <br>
+        {% endfor %}
+        </div>
       <div class="w3-twothird">
         <h1 class="w3-padding-32">Notes</h1>
         <p class="w3-text-grey">{{ recipe.notes }}</p>

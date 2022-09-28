@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for
 from app import app
-from app.api_utils import to_dict, search_recipe, handle_quote_of_day
+from app.api_utils import process_recipe_form, to_dict, search_recipe, handle_quote_of_day
 from app.models import Project, Recipe
 from app import db
 
@@ -26,6 +26,7 @@ def recipes():
 		recipe = recipes[len(recipes) - 1]
 		num_recipes = len(recipes)
 		recipe = to_dict(recipe)
+		recipe['directions'] = recipe['directions'].split(',')
 		recipe_count_str = ''
 		if num_recipes == 1:
 			recipe_count_str = 'There is {} recipe currently.'.format(num_recipes)
@@ -88,12 +89,13 @@ def api_add_recipe():
 		return "Invalid use of API!"
 	else:
 		print(request.form.to_dict())
+		processed_req = process_recipe_form(request.form.to_dict())
 		recipe = Recipe(recipe_name=request.form['recipe_name'],
 		servings=request.form['servings'],
 		prep_time=request.form['prep_time'],
 		cook_time=request.form['cook_time'],
-		ingredients=request.form['ingredients'],
-		directions=request.form['directions'],
+		ingredients=processed_req['ingredients'],
+		directions=processed_req['directions'],
 		notes=request.form['notes'])
 		db.session.add(recipe)
 		db.session.commit()
