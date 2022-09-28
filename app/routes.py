@@ -90,6 +90,28 @@ def recipes_delete():
                             quote=handle_quote_of_day(),
                             recipes=current_recipes)
 
+@app.route('/recipes/update')
+def recipes_update():
+    current_recipes = Recipe.query.all()
+    return render_template('recipes-update.html',
+                            page_title='Update a Recipe',
+                            notform=False,
+                            quote=handle_quote_of_day(),
+                            recipes=current_recipes)
+
+
+@app.route('/recipes/update/recipe', methods=['POST'])
+def recipes_update_content():
+	if request.method != 'POST':
+		return "Illegal access of member!"
+	else:
+		recipe = Recipe.query.filter_by(recipe_name=request.form['recipe_name']).first()
+		print(recipe)
+		return render_template('recipes-update-form.html',
+							page_title='Update Recipe: {}'.format(recipe.recipe_name),
+							notform=False,
+							quote=handle_quote_of_day(),
+							recipe=recipe)
 
 @app.route('/api/recipes/add/recipe', methods=['POST'])
 def api_add_recipe():
@@ -119,6 +141,48 @@ def api_delete_recipe():
 		print(recipe)
 		db.session.delete(recipe)
 		db.session.commit()
+		return redirect(url_for('recipes'))
+
+@app.route('/api/recipes/update/recipe', methods=['POST'])
+def api_update_recipe():
+	if request.method != 'POST':
+		return 'Invalid use of API!'
+	else:
+		print(request.form.to_dict())
+		recipe_d = request.form.to_dict()
+		processed_req = process_recipe_form(recipe_d)
+		recipe = Recipe.query.filter_by(recipe_name=recipe_d['old_recipe_name']).first()
+		'''
+		print(recipe)
+		print(type(recipe))
+		print("Before")
+		print(recipe)
+		print(10*"-")
+		recipe.recipe_name = recipe_d['recipe_name']
+		recipe.servings = recipe_d['servings']
+		recipe.cook_time = recipe_d['cook_time']
+		recipe.ingredients = processed_req['ingredients'],
+		recipe.directions = processed_req['directions'],
+		recipe.notes = request.form['notes']
+		print("After")
+		print(recipe)
+		db.session.merge(recipe)
+		db.session.commit()
+		'''
+		f=db.session.query(Recipe). \
+			filter(Recipe.recipe_name == str(recipe_d['old_recipe_name'])). \
+			update({
+				'recipe_name' : recipe_d['recipe_name'],
+				'servings' : recipe_d['servings'],
+				'prep_time' : recipe_d['prep_time'],
+				'cook_time' : recipe_d['cook_time'],
+				'ingredients' : processed_req['ingredients'],
+				'directions' : processed_req['directions'],
+				'notes' : recipe_d['notes']
+			})
+		db.session.commit()
+		#db.session.commit()
+		print(f)
 		return redirect(url_for('recipes'))
 
 @app.route('/projects')
