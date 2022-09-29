@@ -163,7 +163,6 @@ def api_update_recipe():
 				'notes' : recipe_d['notes']
 			})
 		db.session.commit()
-		#db.session.commit()
 		print(f)
 		return redirect(url_for('recipes'))
 

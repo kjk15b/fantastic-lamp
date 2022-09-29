@@ -1,12 +1,5 @@
 from app import db
 
-class Todo(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	text = db.Column(db.String(200))
-	complete = db.Column(db.Boolean)
-	
-	def __repr__(self):
-		return self.text
 		
 class Project(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -40,7 +33,7 @@ class Workout(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String)
 	dur = db.Column(db.Integer)
-	tstamp = db.column(db.String)
+	tstamp = db.Column(db.String)
 
 class Quote(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
