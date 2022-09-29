@@ -79,11 +79,21 @@ def handle_quote_of_day():
         dt = now - tstamp
         if dt >= datetime.timedelta(days=1):
             new_quote = get_random_quote()
+            '''
             db.session.update({
                 'author' : new_quote['author'],
                 'quote' : new_quote['quote'],
                 'fetched_on' : str(datetime.datetime.now())
             })
+            '''
+            db.session.query(Quote). \
+			filter(Quote.id == 1). \
+			update({
+				'author' : new_quote['author'],
+				'quote' : new_quote['quote'],
+				'fetched_on' : str(datetime.datetime.now())
+			})
+
             return new_quote
         else:
             return {
