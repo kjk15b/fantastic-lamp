@@ -6,13 +6,15 @@ from app import db
 def to_dict(recipe : Recipe):
     ingredients = recipe.ingredients
     ingredients_list = ingredients.split(',')
+    directions = recipe.directions
+    directions_list = directions.split(',')
     recipe_dict = {
         'recipe_name' : recipe.recipe_name,
         'servings' : recipe.servings,
         'prep_time' : recipe.prep_time,
         'cook_time' : recipe.cook_time,
         'ingredients' : ingredients_list,
-        'directions' : recipe.directions,
+        'directions' : directions_list,
         'notes' : recipe.notes
     }
     return recipe_dict
