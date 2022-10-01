@@ -36,7 +36,7 @@ def recipes():
 		recipe = recipes[len(recipes) - 1]
 		num_recipes = len(recipes)
 		recipe = to_dict(recipe)
-		recipe['directions'] = recipe['directions'].split(',')
+		#recipe['directions'] = recipe['directions'].split(',')
 		recipe_count_str = ''
 		if num_recipes == 1:
 			recipe_count_str = 'There is {} recipe currently.'.format(num_recipes)
@@ -107,10 +107,10 @@ def recipes_update_content():
 	if request.method != 'POST':
 		return "Illegal access of member!"
 	else:
-		recipe = Recipe.query.filter_by(recipe_name=request.form['recipe_name']).first()
+		recipe = to_dict(Recipe.query.filter_by(recipe_name=request.form['recipe_name']).first())
 		print(recipe)
 		return render_template('recipes-update-form.html',
-							page_title='Update Recipe: {}'.format(recipe.recipe_name),
+							page_title='Update Recipe: {}'.format(recipe['recipe_name']),
 							notform=False,
 							quote=handle_quote_of_day(),
 							recipe=recipe)
