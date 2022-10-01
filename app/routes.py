@@ -1,8 +1,10 @@
-from flask import render_template, request, redirect, url_for
+from flask import jsonify, render_template, request, redirect, url_for, make_response
 from app import app
-from app.api_utils import process_recipe_form, to_dict, search_recipe, handle_quote_of_day
+from app.api_utils import bulk_upload_to_database, process_recipe_form, to_dict, search_recipe, handle_quote_of_day, process_all_projects, process_all_recipes
 from app.models import Project, Recipe
 from app import db
+import datetime
+import json
 
 @app.route('/weight')
 @app.route('/weight/add')
@@ -230,3 +232,41 @@ def api_delete_project():
 		db.session.delete(project)
 		db.session.commit()
 		return redirect(url_for('projects'))
+
+
+@app.route('/exim')
+def exim():
+	return render_template('exim.html',
+                            page_title='Export / Import Database',
+                            notform=False,
+                            quote=handle_quote_of_day())
+
+@app.route('/api/database/import', methods=['POST'])
+def import_db():
+	if request.method != 'POST':
+		return "Illegal use of API!"
+	else:
+		dbfile = request.files['dbfile']
+		if dbfile:
+			db_data = json.load(dbfile)
+			bulk_upload_to_database(db_data)
+			print(db_data)
+			print(db_data.keys())
+		return redirect(url_for('exim'))
+
+@app.route('/api/database/export')
+def export_db():
+	recipes = process_all_recipes(Recipe.query.all())
+	projects = process_all_projects(Project.query.all())
+	print(recipes, ' : ', type(recipes))
+	print(projects, ' : ', type(projects))
+	payload = {
+		'recipes' : recipes,
+		'projects' : projects
+	}
+	response = make_response(jsonify(payload))
+	now = datetime.datetime.now()
+	now = now.strftime('%d_%m_%Y')
+	response.headers['Content-Disposition'] = 'attachment; filename=EXPORT_{}.json'.format(now)
+	response.mimetype = 'text/json'
+	return response
