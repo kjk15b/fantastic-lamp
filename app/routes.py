@@ -1,15 +1,15 @@
-from flask import jsonify, render_template, request, redirect, url_for, make_response
+from flask import jsonify, render_template, Response, request, redirect, url_for, make_response
 from app import app
-from app.api_utils import bulk_upload_to_database, process_recipe_form, to_dict, search_recipe, handle_quote_of_day, process_all_projects, process_all_recipes
-from app.models import Project, Recipe
+from app.api_utils import bulk_upload_to_database, get_past_week, get_weights_by_time, process_all_weights, process_recipe_form, to_dict, search_recipe, handle_quote_of_day, process_all_projects, process_all_recipes
+from app.models import Project, Recipe, Weight
 from app import db
 import datetime
 import json
+from io import BytesIO
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
-@app.route('/weight')
-@app.route('/weight/add')
-@app.route('/weight/search')
-@app.route('/weight/delete')
+
 @app.route('/workout')
 @app.route('/workout/add')
 @app.route('/workout/search')
@@ -258,11 +258,14 @@ def import_db():
 def export_db():
 	recipes = process_all_recipes(Recipe.query.all())
 	projects = process_all_projects(Project.query.all())
+	weights = process_all_weights(Weight.query.all())
 	print(recipes, ' : ', type(recipes))
 	print(projects, ' : ', type(projects))
+	print(weights, ' : ', type(weights))
 	payload = {
 		'recipes' : recipes,
-		'projects' : projects
+		'projects' : projects,
+		'weights' : weights
 	}
 	response = make_response(jsonify(payload))
 	now = datetime.datetime.now()
@@ -270,3 +273,116 @@ def export_db():
 	response.headers['Content-Disposition'] = 'attachment; filename=EXPORT_{}.json'.format(now)
 	response.mimetype = 'text/json'
 	return response
+
+@app.route('/weight', methods=['GET', 'POST'])
+def weight():
+	weights = get_past_week()
+	return render_template('weight.html', 
+						page_title="Weight Tracking",
+						quote=handle_quote_of_day(),
+						weights=weights)
+@app.route('/weight/add')
+def weight_add():
+	return render_template('weight-add.html',
+							page_title="Add a new Weight Entry",
+							quote=handle_quote_of_day())
+
+@app.route('/weight/search', methods=['GET', 'POST'])
+def weight_search():
+	if request.method == 'GET':
+		return render_template('weight-search.html',
+								page_title="Weight Search",
+								quote=handle_quote_of_day(),
+								search=False)
+	elif request.method == 'POST':
+		return render_template('weight-search.html',
+								page_title="Weight Search",
+								quote=handle_quote_of_day(),
+								search=True,
+								tstamp_start=request.form['tstamp_start'],
+								tstamp_stop=request.form['tstamp_stop'])
+
+@app.route('/weight/delete')
+def weight_delete():
+	weights = Weight.query.all()
+	return render_template('weight-delete.html',
+							page_title="Delete a Weight Entry",
+							quote=handle_quote_of_day(),
+							weights=weights)
+
+@app.route('/api/weight/delete', methods=['POST'])
+def api_weight_delete():
+	if request.method == 'POST':
+		weight = Weight.query.filter_by(tstamp=request.form['tstamp']).first()
+		print(weight)
+		db.session.delete(weight)
+		db.session.commit()
+		return redirect(url_for('weight_delete'))
+
+@app.route('/api/weight/add/weight', methods=['POST'])
+def api_add_weight():
+	print(request.form.to_dict())
+	weight_d = request.form.to_dict()
+	weight = Weight(
+		weight=float(weight_d['weight']),
+		tstamp=weight_d['tstamp']
+	)
+	db.session.add(weight)
+	db.session.commit()
+	return redirect(url_for('weight'))
+
+
+@app.route('/api/weight/plot/<start>/<stop>')
+def figure_search_plot(start : str, stop : str):
+	fig = Figure(figsize=(9.375, 8))
+	ax = fig.add_subplot(1,1,1)
+	weights = get_weights_by_time(start, stop)
+	xs = []
+	ys = []
+	for weight in weights:
+		xs.append(weight.tstamp)
+		ys.append(weight.weight)
+	ax.plot(xs, ys, '--')
+	ax.scatter(xs, ys)
+	ax.tick_params(axis='x', rotation=45)
+	ax.set_title('Time Range from {} to {}'.format(xs[0], xs[len(xs)-1]))
+	ax.set_ylabel('Weight [lbs]')
+	output = BytesIO()
+	FigureCanvas(fig).print_png(output)
+	return Response(output.getvalue(), mimetype='image/png')
+
+@app.route('/api/weight/hist/<start>/<stop>')
+def figure_search_hist(start : str, stop : str):
+	fig = Figure(figsize=(9.375, 8))
+	ax = fig.add_subplot(1,1,1)
+	weights = get_weights_by_time(start, stop)
+	ys = []
+	for weight in weights:
+		ys.append(weight.weight)
+	ax.hist(ys)
+	ax.tick_params(axis='x', rotation=45)
+	ax.set_title('Time Range from {} to {}'.format(start, stop))
+	ax.set_xlabel('Weight [lbs]')
+	ax.set_ylabel('Counts()')
+	output = BytesIO()
+	FigureCanvas(fig).print_png(output)
+	return Response(output.getvalue(), mimetype='image/png')
+
+@app.route('/api/week/weight/plot')
+def figure_plot():
+	fig = Figure(figsize=(9.375, 8))
+	ax = fig.add_subplot(1,1,1)
+	weights = get_past_week()
+	xs = []
+	ys = []
+	for weight in weights:
+		xs.append(weight.tstamp)
+		ys.append(weight.weight)
+	ax.plot(xs, ys, '--')
+	ax.scatter(xs, ys)
+	ax.tick_params(axis='x', rotation=45)
+	ax.set_title('Time Range from {} to {}'.format(xs[0], xs[len(xs)-1]))
+	ax.set_ylabel('Weight [lbs]')
+	output = BytesIO()
+	FigureCanvas(fig).print_png(output)
+	return Response(output.getvalue(), mimetype='image/png')
