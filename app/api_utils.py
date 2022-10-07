@@ -49,14 +49,20 @@ def search_recipe(search_args : dict):
     recipe_list = []
     search_ingredients = []
     if search_args['ingredients'] != '':
-        search_ingredients = search_args['ingredients'].split(',')
+        if ',' in search_args['ingredients']:
+            search_ingredients = search_args['ingredients'].split(',')
+        else:
+            search_ingredients = [search_args['ingredients']]
     for recipe in recipes:
         recipe_d = to_dict(recipe)
         ingredient_found = False
         for ingredient in search_ingredients:
-            if ingredient.lower() in recipe_d['ingredients'].lower():
-                recipe_list.append(recipe_d)
-                ingredient_found = True
+            for recipe_ing in recipe_d['ingredients']:
+                print("Comparing: {}, to: {}".format(ingredient, recipe_ing))
+                if ingredient.lower() in recipe_ing.lower():
+                    recipe_list.append(recipe_d)
+                    ingredient_found = True
+                    break
         if not ingredient_found:
             if search_args['servings'] == '' and search_args['prep_time'] == '' and search_args['cook_time'] == '' and search_args['ingredients'] == '':
                 recipe_list.append(recipe_d)
@@ -182,7 +188,7 @@ def bulk_upload_to_database(db_data : dict):
                     prep_time=recipe['servings'],
                     cook_time=recipe['cook_time'],
                     ingredients=recipe['ingredients'],
-                    directions=recipe['directions'],
+                    directions=flatten_list(recipe['directions']),
                     notes=recipe['notes'])
                     print("Found new recipe: {}, updating now!".format(r.recipe_name))
                     db.session.add(r)
