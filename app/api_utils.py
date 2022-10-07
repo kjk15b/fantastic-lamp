@@ -1,4 +1,3 @@
-from more_itertools import last
 from app.models import Recipe, Quote, Project, Weight
 import datetime
 import requests
