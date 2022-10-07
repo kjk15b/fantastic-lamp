@@ -280,7 +280,9 @@ def weight():
 	return render_template('weight.html', 
 						page_title="Weight Tracking",
 						quote=handle_quote_of_day(),
-						weights=weights)
+						weights=weights,
+						no_weights=len(weights))
+
 @app.route('/weight/add')
 def weight_add():
 	return render_template('weight-add.html',
