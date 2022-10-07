@@ -115,6 +115,22 @@ def recipes_update_content():
 							quote=handle_quote_of_day(),
 							recipe=recipe)
 
+@app.route('/recipe/view/', methods=['POST'])
+def recipe_view():
+	if request.method == 'POST':
+		recipe = to_dict(Recipe.query.filter_by(recipe_name=request.form['recipe_name']).first())
+		search_params = {
+			'cook_time' : request.form['cook_time'],
+			'prep_time' : request.form['prep_time'],
+			'servings' : request.form['servings'],
+			'ingredients' : request.form['ingredients']
+		}
+		return render_template('recipe-view.html',
+								page_title="Recipe Snapshot",
+								quote=handle_quote_of_day(),
+								search_params=search_params,
+								recipe=recipe)
+
 @app.route('/api/recipes/add/recipe', methods=['POST'])
 def api_add_recipe():
 	if request.method != 'POST':

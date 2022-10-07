@@ -1,0 +1,53 @@
+{%extends "base.html" %}
+{%block content%}
+
+<div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+        <div class="container">
+            <form action="/recipes/search/results" method="post">
+                {% for key, value in search_params.items() %}
+                <input type="hidden" name="{{ key }}" id="{{ key }}" value="{{ value }}">
+                {% endfor %}
+                <div class="row">
+                    <input type="submit" value="Return to Results">
+                  </div>
+            </form>
+          </div>
+    </div>
+  </div>
+
+
+<div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+      <div class="w3-twothird">
+        <h2 class="w3-padding-32">{{ recipe.recipe_name }}</h2>
+        <p class="w3-text-grey">Servings: {{ recipe.servings }}</p>
+        <p class="w3-text-grey">Prep Time: {{ recipe.prep_time }}</p>
+        <p class="w3-text-grey">Total Cook Time: {{ recipe.cook_time }}</p>
+        <hr>
+        <h3 class="w3-padding-32">Ingredients List</h3>
+        <table>
+            <tbody>
+                {% for ingredient in recipe.ingredients %}
+                    <tr>
+                        <td class="w3-text-grey">{{ ingredient }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+      <hr>
+      <div class="w3-twothird">
+        <h3 class="w3-padding-32">Instructions</h3>
+        {% for step in recipe.directions %}
+          <p class="w3-text-grey">{{ step }}</p>
+          <br>
+        {% endfor %}
+        </div>
+      <div class="w3-twothird">
+        <h3 class="w3-padding-32">Notes</h3>
+        <p class="w3-text-grey">{{ recipe.notes }}</p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

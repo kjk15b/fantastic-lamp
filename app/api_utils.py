@@ -110,19 +110,23 @@ def handle_quote_of_day():
     quotes = Quote.query.all()
     if len(quotes) > 0:
         last_quote = quotes[len(quotes) - 1]
+        author = last_quote.author
         now = datetime.datetime.now()
         tstamp = datetime.datetime.strptime(last_quote.fetched_on, '%Y-%m-%d %H:%M:%S.%f')
         dt = now - tstamp
+        print("TSTAMP={}".format(tstamp))
+        print("TIME DELTA={}".format(dt))
+        print("GT A DAY={}".format(dt >= datetime.timedelta(days=1)))
         if dt >= datetime.timedelta(days=1):
             new_quote = get_random_quote()
             db.session.query(Quote). \
-			filter(Quote.id == 1). \
+			filter(Quote.author == author). \
 			update({
 				'author' : new_quote['author'],
 				'quote' : new_quote['quote'],
 				'fetched_on' : str(datetime.datetime.now())
 			})
-
+            db.session.commit()
             return new_quote
         else:
             return {
