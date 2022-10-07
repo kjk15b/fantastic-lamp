@@ -375,16 +375,17 @@ def figure_plot():
 	fig = Figure(figsize=(9.375, 8))
 	ax = fig.add_subplot(1,1,1)
 	weights = get_past_week()
-	xs = []
-	ys = []
-	for weight in weights:
-		xs.append(weight.tstamp)
-		ys.append(weight.weight)
-	ax.plot(xs, ys, '--')
-	ax.scatter(xs, ys)
-	ax.tick_params(axis='x', rotation=45)
-	ax.set_title('Time Range from {} to {}'.format(xs[0], xs[len(xs)-1]))
-	ax.set_ylabel('Weight [lbs]')
+	if len(weights) > 0:
+		xs = []
+		ys = []
+		for weight in weights:
+			xs.append(weight.tstamp)
+			ys.append(weight.weight)
+		ax.plot(xs, ys, '--')
+		ax.scatter(xs, ys)
+		ax.tick_params(axis='x', rotation=45)
+		ax.set_title('Time Range from {} to {}'.format(xs[0], xs[len(xs)-1]))
+		ax.set_ylabel('Weight [lbs]')
 	output = BytesIO()
 	FigureCanvas(fig).print_png(output)
 	return Response(output.getvalue(), mimetype='image/png')
