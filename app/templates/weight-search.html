@@ -1,0 +1,110 @@
+{%extends "base.html" %}
+{%block content%}
+  
+<style>
+    * {
+  box-sizing: border-box;
+}
+input[type=text], select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+label {
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+}
+input[type=submit] {
+  background-color: #04AA6D;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+}
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+.container {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+.col-25 {
+  float: left;
+  width: 25%;
+  margin-top: 6px;
+}
+.col-75 {
+  float: left;
+  width: 75%;
+  margin-top: 6px;
+}
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .col-25, .col-75, input[type=submit] {
+    width: 100%;
+    margin-top: 0;
+  }
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- First Grid -->
+<div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+        <h1>Search by a Range</h1>
+        <div class="container">
+            <form action="/weight/search" method="post">
+            <div class="row">
+              <div class="col-25">
+                <label for="tstamp_start">Start Time</label>
+              </div>
+              <div class="col-75">
+                <input type="date" id="tstamp_start" name="tstamp_start" placeholder="45">
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                  <label for="tstamp_stop">Stop Time</label>
+                </div>
+                <div class="col-75">
+                  <input type="date" id="tstamp_stop" name="tstamp_stop" placeholder="45">
+                </div>
+              </div>
+            <br>
+            <div class="row">
+              <input type="submit" value="Submit">
+            </div>
+            </form>
+          </div>
+    </div>
+  </div>
+  {% if search %}
+  <div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+        <h1>Weight Trend: {{ tstamp_start }} - {{ tstamp_stop }}</h1>
+        <div class="container">
+              <img src="/api/weight/plot/{{ tstamp_start }}/{{ tstamp_stop }}">
+          </div>
+    </div>
+  </div>
+  <div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+        <div class="container">
+              <img src="/api/weight/hist/{{ tstamp_start }}/{{ tstamp_stop }}">
+          </div>
+    </div>
+  </div>
+  {% endif %}
+  <script src="/static/add_form.js"></script>
+
+{% endblock %}

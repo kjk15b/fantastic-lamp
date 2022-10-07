@@ -1,4 +1,4 @@
-from app.models import Recipe, Quote, Project
+from app.models import Recipe, Quote, Project, Weight
 import datetime
 import requests
 from app import db
@@ -37,6 +37,15 @@ def process_all_projects(project_list : list):
     out_list = []
     for project in project_list:
         out_list.append(proj_to_dict(project))
+    return out_list
+
+def process_all_weights(weight_list : list):
+    out_list = []
+    for weight in weight_list:
+        out_list.append(
+            {'tstamp' : weight.tstamp,
+            'weight' : weight.weight}
+        )
     return out_list
 
 def directions_to_list(dir_str : str):
@@ -193,4 +202,37 @@ def bulk_upload_to_database(db_data : dict):
                     print("Found new recipe: {}, updating now!".format(r.recipe_name))
                     db.session.add(r)
                     db.session.commit()
+        elif table == 'weights':
+            for weight in db_data[table]:
+                print("WEIGHT")
+                is_in = Weight.query.filter_by(tstamp=weight['tstamp']).first()
+                print(type(is_in))
+                if type(is_in) != Weight:
+                    w = Weight(weight=weight['weight'],
+                                tstamp=weight['tstamp'])
+                    print("Found new weight: {}, {}. Updating now!".format(w.tstamp, w.weight))
+                    db.session.add(w)
+                    db.session.commit()
     pass
+
+def get_past_week():
+    now = datetime.datetime.now()
+    week_ago = now - datetime.timedelta(days=7)
+    weight_week = []
+    weights = Weight.query.all()
+    for weight in weights:
+        time_weight = datetime.datetime.strptime(weight.tstamp, '%Y-%m-%d')
+        if time_weight >= week_ago and time_weight <= now:
+            weight_week.append(weight)
+    return weight_week
+
+def get_weights_by_time(start_time : str, stop_time : str):
+    start_time = datetime.datetime.strptime(start_time, '%Y-%m-%d')
+    stop_time = datetime.datetime.strptime(stop_time, '%Y-%m-%d')
+    weights = Weight.query.all()
+    weight_list = []
+    for weight in weights:
+        time_weight = datetime.datetime.strptime(weight.tstamp, '%Y-%m-%d')
+        if time_weight >= start_time and time_weight <= stop_time:
+            weight_list.append(weight)
+    return weight_list
