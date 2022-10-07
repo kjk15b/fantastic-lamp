@@ -52,7 +52,6 @@ def search_recipe(search_args : dict):
         search_ingredients = search_args['ingredients'].split(',')
     for recipe in recipes:
         recipe_d = to_dict(recipe)
-        recipe_d['directions'] = directions_to_list(recipe_d['directions'])
         ingredient_found = False
         for ingredient in search_ingredients:
             if ingredient.lower() in recipe_d['ingredients'].lower():
