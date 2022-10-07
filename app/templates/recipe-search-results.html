@@ -22,39 +22,42 @@
       {% endif %}  
     </div>
   </div>
-{% for recipe in recipes %}
-<div class="w3-row-padding w3-padding-64 w3-container">
+
+  <div class="w3-row-padding w3-padding-64 w3-container">
     <div class="w3-content">
-      <div class="w3-twothird">
-            <h1 class="w3-padding-32">{{ recipe.recipe_name }}</h5>
-            <p class="w3-text-grey">Servings: {{ recipe.servings }}</p>
-            <p class="w3-text-grey">Prep Time: {{ recipe.prep_time }}</p>
-            <p class="w3-text-grey">Total Cook Time: {{ recipe.cook_time }}</p>
-            <hr>
-            <h1 class="w3-padding-32">Ingredients List</h5>
-            <table>
-                <tbody>
-                    {% for ingredient in recipe.ingredients %}
+        <h1>Results</h1>
+        <div class="container">
+              <table>
+                    <th>
                         <tr>
-                            <td class="w3-text-grey">{{ ingredient }}</td>
+                            <td>Recipe Name</td>
+                            <td>Servings</td>
+                            <td>Prep Time</td>
+                            <td>Total Time</td>
+                            <td>Notes</td>
+                            <td>Link</td>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <hr>
-        <div class="w3-twothird">
-            <h1 class="w3-padding-32">Instructions</h1>
-            {% for step in recipe.directions %}
-              <p class="w3-text-grey">{{ step }}</p>
-              <br>
-            {% endfor %}
-        </div>
-        <div class="w3-twothird">
-            <h1 class="w3-padding-32">Notes</h1>
-            <p class="w3-text-grey">{{ recipe.notes }}</p>
-        </div>
+                      </th>
+                      {% for recipe in recipes %}
+                      <tr>
+                            <td>{{ recipe.recipe_name }}</td>
+                            <td>{{ recipe.servings }}</td>
+                            <td>{{ recipe.prep_time }}</td>
+                            <td>{{ recipe.cook_time }}</td>
+                            <td>{{ recipe.notes }}</td>
+                            <td>
+                              <form action="/recipe/view" method="post">
+                                {% for key, value in search_params.items() %}
+                                <input type="hidden" name="{{ key }}" id="{{ key }}" value="{{ value }}">
+                                {% endfor %}
+                                <input type="hidden" name="recipe_name" id="recipe_name" value="{{ recipe.recipe_name }}">
+                                <input type="submit" value="View">
+                              </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                </table>
+          </div>
     </div>
   </div>
-  {% endfor %}
 {% endblock %}
