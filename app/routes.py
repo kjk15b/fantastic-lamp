@@ -1,6 +1,6 @@
 from flask import jsonify, render_template, Response, request, redirect, url_for, make_response
 from app import app
-from app.api_utils import bulk_upload_to_database, get_past_week, get_weights_by_time, process_all_weights, process_food_diary, process_recipe_form, to_dict, search_recipe, handle_quote_of_day, process_all_projects, process_all_recipes
+from app.api_utils import bulk_upload_to_database, get_past_week, get_weights_by_time, process_all_diaries, process_all_weights, process_food_diary, process_recipe_form, to_dict, search_recipe, handle_quote_of_day, process_all_projects, process_all_recipes
 from app.models import Project, Recipe, Weight, Food_Diary
 from app import db
 import datetime
@@ -271,13 +271,15 @@ def export_db():
 	recipes = process_all_recipes(Recipe.query.all())
 	projects = process_all_projects(Project.query.all())
 	weights = process_all_weights(Weight.query.all())
+	food_diaries = process_all_diaries(Food_Diary.query.all())
 	print(recipes, ' : ', type(recipes))
 	print(projects, ' : ', type(projects))
 	print(weights, ' : ', type(weights))
 	payload = {
 		'recipes' : recipes,
 		'projects' : projects,
-		'weights' : weights
+		'weights' : weights,
+		'food_diary' : food_diaries
 	}
 	response = make_response(jsonify(payload))
 	now = datetime.datetime.now()

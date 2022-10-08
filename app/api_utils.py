@@ -1,4 +1,4 @@
-from app.models import Recipe, Quote, Project, Weight
+from app.models import Food_Diary, Recipe, Quote, Project, Weight
 import datetime
 import requests
 from app import db
@@ -46,6 +46,21 @@ def process_all_weights(weight_list : list):
             {'tstamp' : weight.tstamp,
             'weight' : weight.weight}
         )
+    return out_list
+
+def process_all_diaries(food_diaries : list):
+    out_list = []
+    for food_diary in food_diaries:
+        out_list.append({
+            'breakfast' : food_diary.breakfast,
+		    'b_cal' : food_diary.b_cal,
+		    'lunch' : food_diary.lunch,
+		    'l_cal' : food_diary.l_cal,
+		    'dinner' : food_diary.dinner,
+		    'd_cal' : food_diary.d_cal,
+		    'snack' : food_diary.snack,
+		    's_cal' : food_diary.s_cal,
+		    'tstamp' : food_diary.tstamp})
     return out_list
 
 def directions_to_list(dir_str : str):
@@ -216,6 +231,23 @@ def bulk_upload_to_database(db_data : dict):
                                 tstamp=weight['tstamp'])
                     print("Found new weight: {}, {}. Updating now!".format(w.tstamp, w.weight))
                     db.session.add(w)
+                    db.session.commit()
+        elif table == 'food_diary':
+            for food_diary in db_data[table]:
+                is_in = Food_Diary.query.filter_by(tstamp=food_diary['tstamp']).first()
+                print(type(is_in))
+                if type(is_in) != Food_Diary:
+                    fd = Food_Diary(
+                        breakfast=food_diary['breakfast'],
+		                b_cal=float(food_diary['b_cal']),
+		                lunch=food_diary['lunch'],
+		                l_cal=float(food_diary['l_cal']),
+		                dinner=food_diary['dinner'],
+		                d_cal=float(food_diary['d_cal']),
+		                snack=food_diary['snack'],
+		                s_cal=float(food_diary['s_cal']),
+		                tstamp=food_diary['tstamp'])
+                    db.session.add(fd)
                     db.session.commit()
     pass
 
