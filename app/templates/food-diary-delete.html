@@ -1,0 +1,59 @@
+{%extends "base.html" %}
+{%block content%}
+  
+<!-- First Grid -->
+{% if have_diary > 0 %}
+<div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+      <div class="w3-twothird">
+        <hr>
+            <table>
+                <th>
+                    <tr>
+                        <td>Date</td>
+                        <td>Breakfast</td>
+                        <td>Calories</td>
+                        <td>Lunch</td>
+                        <td>Calories</td>
+                        <td>Dinner</td>
+                        <td>Calories</td>
+                        <td>Snack</td>
+                        <td>Calories</td>
+                        <td>Link</td>
+                    </tr>
+                  </th>
+                  {% for food_diary in food_diaries %}
+                  <tr>
+                    <td>{{ food_diary.tstamp }}</td>
+                        <td>{{ food_diary.breakfast }}</td>
+                        <td>{{ food_diary.b_cal }}</td>
+                        <td>{{ food_diary.lunch }}</td>
+                        <td>{{ food_diary.l_cal }}</td>
+                        <td>{{ food_diary.dinner }}</td>
+                        <td>{{ food_diary.d_cal }}</td>
+                        <td>{{ food_diary.snack }}</td>
+                        <td>{{ food_diary.s_cal }}</td>
+                        <td>
+                            <form action="/api/food-diary/delete" method="post">
+                                <input type="hidden" name="tstamp" id="tstamp" value="{{ food_diary.tstamp }}">
+                                <input type="submit" value="Delete">
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+            </table>
+      </div>
+      <hr>
+    </div>
+  </div>
+{% else %}
+<div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+      <div class="w3-twothird">
+        <h1 class="w3-padding-32">No diaries could be found! </h1>  
+        <p class="w3-text-grey">Please create a new entry <a href="/food-diary/add">here</a></p>
+    </div>
+  </div>
+</div>
+ {% endif %} 
+{% endblock %}

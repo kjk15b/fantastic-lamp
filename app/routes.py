@@ -1,7 +1,7 @@
 from flask import jsonify, render_template, Response, request, redirect, url_for, make_response
 from app import app
-from app.api_utils import bulk_upload_to_database, get_past_week, get_weights_by_time, process_all_weights, process_recipe_form, to_dict, search_recipe, handle_quote_of_day, process_all_projects, process_all_recipes
-from app.models import Project, Recipe, Weight
+from app.api_utils import bulk_upload_to_database, get_past_week, get_weights_by_time, process_all_weights, process_food_diary, process_recipe_form, to_dict, search_recipe, handle_quote_of_day, process_all_projects, process_all_recipes
+from app.models import Project, Recipe, Weight, Food_Diary
 from app import db
 import datetime
 import json
@@ -10,10 +10,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
 
-@app.route('/workout')
-@app.route('/workout/add')
-@app.route('/workout/search')
-@app.route('/workout/delete')
+
 @app.route('/')
 def home():
     return render_template('base.html',
@@ -181,7 +178,6 @@ def api_update_recipe():
 				'notes' : recipe_d['notes']
 			})
 		db.session.commit()
-		print(f)
 		return redirect(url_for('recipes'))
 
 @app.route('/projects')
@@ -405,3 +401,101 @@ def figure_plot():
 	output = BytesIO()
 	FigureCanvas(fig).print_png(output)
 	return Response(output.getvalue(), mimetype='image/png')
+
+
+@app.route('/food-diary')
+def food_diary():
+	now = datetime.datetime.now()
+	food_diaries = Food_Diary.query.all()
+	food_diary = None
+	if len(food_diaries) > 0:
+		for diary in food_diaries:
+			print(diary.tstamp)
+			tstamp = datetime.datetime.strptime(diary.tstamp, '%Y-%m-%d')
+			if now.day == tstamp.day and now.year == tstamp.year and now.month == tstamp.month:
+				food_diary = diary
+	return render_template('food-diary.html',
+						page_title="Today's Food Diary",
+						quote=handle_quote_of_day(),
+						food_diary=food_diary,
+						have_diary=len(food_diaries))
+
+@app.route('/food-diary/add')
+def food_diary_add():
+	return render_template('food-diary-add.html',
+							page_title="Food Diary Add",
+							quote=handle_quote_of_day(),
+							update=False,
+							food_diary=None)
+
+@app.route('/food-diary/update')
+def food_diary_update():
+	food_diaries = Food_Diary.query.all()
+	return render_template('food-diary-update.html',
+							page_title="Update a Food Diary Entry",
+							quote=handle_quote_of_day(),
+							food_diaries=food_diaries,
+							have_diary=len(food_diaries))
+
+@app.route('/food-diary/update/form', methods=['POST'])
+def food_diary_update_form():
+	return render_template('food-diary-add.html',
+							page_title="Update a Food Diary Form",
+							quote=handle_quote_of_day(),
+							update=True,
+							food_diary=request.form.to_dict())
+
+@app.route('/food-diary/delete')
+def food_diary_delete():
+	food_diaries = Food_Diary.query.all()
+	return render_template('food-diary-delete.html',
+						page_title="Delte a Food Diary",
+						quote=handle_quote_of_day(),
+						food_diaries=food_diaries,
+						have_diary=len(food_diaries))
+
+@app.route('/api/food-diary/add/food-diary', methods=['POST'])
+def api_food_diary_add():
+	food_diary = process_food_diary(request.form.to_dict())
+
+	fd = Food_Diary(
+		breakfast=food_diary['breakfast'],
+		b_cal=float(food_diary['b_cal']),
+		lunch=food_diary['lunch'],
+		l_cal=float(food_diary['l_cal']),
+		dinner=food_diary['dinner'],
+		d_cal=float(food_diary['d_cal']),
+		snack=food_diary['snack'],
+		s_cal=float(food_diary['s_cal']),
+		tstamp=food_diary['tstamp']
+	)
+	db.session.add(fd)
+	db.session.commit()
+	return redirect(url_for('food_diary'))
+
+
+@app.route('/api/food-diary/delete', methods=['POST'])
+def api_food_diary_delete():
+	food_diary = Food_Diary.query.filter_by(tstamp=request.form['tstamp']).first()
+	db.session.delete(food_diary)
+	db.session.commit()
+	return redirect(url_for('food_diary_delete'))
+
+
+@app.route('/api/food-diary/update', methods=['POST'])
+def api_food_diary_update():
+	food_diary = process_food_diary(request.form.to_dict())
+	db.session.query(Food_Diary). \
+			filter(Food_Diary.tstamp == request.form['tstamp']). \
+			update({
+				'breakfast' : food_diary['breakfast'],
+				'b_cal' : food_diary['b_cal'],
+				'lunch' : food_diary['lunch'],
+				'l_cal' : food_diary['l_cal'],
+				'dinner' : food_diary['dinner'],
+				'd_cal' : food_diary['d_cal'],
+				'snack' : food_diary['snack'],
+				's_cal' : food_diary['s_cal']
+			})
+	db.session.commit()
+	return redirect(url_for('food_diary_update'))
