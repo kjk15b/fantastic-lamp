@@ -40,3 +40,15 @@ class Quote(db.Model):
 	author = db.Column(db.String)
 	quote = db.Column(db.String)
 	fetched_on = db.Column(db.String)
+
+class Food_Diary(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	breakfast = db.Column(db.String)
+	b_cal = db.Column(db.REAL)
+	lunch = db.Column(db.String)
+	l_cal = db.Column(db.REAL)
+	dinner = db.Column(db.String)
+	d_cal = db.Column(db.REAL)
+	snack = db.Column(db.String)
+	s_cal = db.Column(db.REAL)
+	tstamp = db.Column(db.String)

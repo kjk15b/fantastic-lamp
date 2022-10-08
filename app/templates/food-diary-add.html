@@ -1,0 +1,246 @@
+{%extends "base.html" %}
+{%block content%}
+  
+<style>
+    * {
+  box-sizing: border-box;
+}
+input[type=text], select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+label {
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+}
+input[type=submit] {
+  background-color: #04AA6D;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+}
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+.container {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+.col-25 {
+  float: left;
+  width: 25%;
+  margin-top: 6px;
+}
+.col-75 {
+  float: left;
+  width: 75%;
+  margin-top: 6px;
+}
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .col-25, .col-75, input[type=submit] {
+    width: 100%;
+    margin-top: 0;
+  }
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- First Grid -->
+{% if not update %}
+<div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+        <h1>Add a Food Diary Entry</h1>
+        <div class="container">
+            <form action="/api/food-diary/add/food-diary" method="post">
+            <div class="row">
+              <div class="col-25">
+                <label for="tstamp">Day to Record</label>
+              </div>
+              <div class="col-75">
+                <input type="date" id="tstamp" name="tstamp" placeholder="45">
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                  <label for="breakfast">Breakfast</label>
+                </div>
+                <div class="col-75">
+                  <input type="text" id="breakfast" name="breakfast" placeholder="Toast">
+                </div>
+              </div>
+            <div class="row">
+              <div class="col-25">
+                <label for="b_cal">Calories</label>
+              </div>
+              <div class="col-75">
+                <input type="number" id="b_cal" name="b_cal" placeholder="100">
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                  <label for="lunch">lunch</label>
+                </div>
+                <div class="col-75">
+                  <input type="text" id="lunch" name="lunch" placeholder="Chicken Strips">
+                </div>
+              </div>
+            <div class="row">
+              <div class="col-25">
+                <label for="l_cal">Calories</label>
+              </div>
+              <div class="col-75">
+                <input type="number" id="l_cal" name="l_cal" placeholder="300">
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                  <label for="dinner">Dinner</label>
+                </div>
+                <div class="col-75">
+                  <input type="text" id="dinner" name="dinner" placeholder="Barbecue">
+                </div>
+              </div>
+            <div class="row">
+              <div class="col-25">
+                <label for="d_cal">Calories</label>
+              </div>
+              <div class="col-75">
+                <input type="number" id="d_cal" name="d_cal" placeholder="300">
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                  <label for="snack">Snack</label>
+                </div>
+                <div class="col-75">
+                  <input type="text" id="snack" name="snack" placeholder="Almonds">
+                </div>
+              </div>
+            <div class="row">
+              <div class="col-25">
+                <label for="s_cal">Calories</label>
+              </div>
+              <div class="col-75">
+                <input type="number" id="s_cal" name="s_cal" placeholder="50">
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <input type="submit" value="Submit">
+            </div>
+            </form>
+          </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+        <h1>Update Food Diary Entry</h1>
+        <div class="container">
+            <form action="/api/food-diary/update" method="post">
+            <div class="row">
+              <div class="col-25">
+                <label for="tstamp">Day to Record</label>
+              </div>
+              <div class="col-75">
+                <p class="w3-text-grey">Original: {{ food_diary.tstamp }}</p>
+                <input type="hidden" id="tstamp" name="tstamp" value="{{ food_diary.tstamp }}">
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                  <label for="breakfast">Breakfast</label>
+                </div>
+                <div class="col-75">
+                  <input type="text" id="breakfast" name="breakfast" placeholder="Toast">
+                  <p class="w3-text-grey">Original: {{ food_diary.breakfast }}</p>
+                </div>
+              </div>
+            <div class="row">
+              <div class="col-25">
+                <label for="b_cal">Calories</label>
+              </div>
+              <div class="col-75">
+                <input type="number" id="b_cal" name="b_cal" placeholder="100">
+                <p class="w3-text-grey">Original: {{ food_diary.b_cal }}</p>
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                  <label for="lunch">lunch</label>
+                </div>
+                <div class="col-75">
+                  <input type="text" id="lunch" name="lunch" placeholder="Chicken Strips">
+                  <p class="w3-text-grey">Original: {{ food_diary.lunch }}</p>
+                </div>
+              </div>
+            <div class="row">
+              <div class="col-25">
+                <label for="l_cal">Calories</label>
+              </div>
+              <div class="col-75">
+                <input type="number" id="l_cal" name="l_cal" placeholder="300">
+                <p class="w3-text-grey">Original: {{ food_diary.l_cal }}</p>
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                  <label for="dinner">Dinner</label>
+                </div>
+                <div class="col-75">
+                  <input type="text" id="dinner" name="dinner" placeholder="Barbecue">
+                  <p class="w3-text-grey">Original: {{ food_diary.dinner }}</p>
+                </div>
+              </div>
+            <div class="row">
+              <div class="col-25">
+                <label for="d_cal">Calories</label>
+              </div>
+              <div class="col-75">
+                <input type="number" id="d_cal" name="d_cal" placeholder="300">
+                <p class="w3-text-grey">Original: {{ food_diary.d_cal }}</p>
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                  <label for="snack">Snack</label>
+                </div>
+                <div class="col-75">
+                  <input type="text" id="snack" name="snack" placeholder="Almonds">
+                  <p class="w3-text-grey">Original: {{ food_diary.snack }}</p>
+                </div>
+              </div>
+            <div class="row">
+              <div class="col-25">
+                <label for="s_cal">Calories</label>
+              </div>
+              <div class="col-75">
+                <input type="number" id="s_cal" name="s_cal" placeholder="50">
+                <p class="w3-text-grey">Original: {{ food_diary.s_cal }}</p>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <input type="submit" value="Update">
+            </div>
+            </form>
+          </div>
+    </div>
+  </div>
+  {% endif %}
+  <script src="/static/add_form.js"></script>
+
+{% endblock %}

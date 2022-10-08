@@ -240,3 +240,23 @@ def get_weights_by_time(start_time : str, stop_time : str):
         if time_weight >= start_time and time_weight <= stop_time:
             weight_list.append(weight)
     return weight_list
+
+
+def process_food_diary(food_diary : dict):
+    if food_diary['b_cal'] == "":
+        food_diary['b_cal'] = 0
+    if food_diary['l_cal'] == "":
+        food_diary['l_cal'] = 0
+    if food_diary['d_cal'] == "":
+        food_diary['d_cal'] = 0
+    if food_diary['s_cal'] == "":
+        food_diary['s_cal'] = 0
+    if food_diary['breakfast'] == "":
+        food_diary['breakfast'] = "< Not Entered Yet >"
+    if food_diary['lunch'] == "":
+        food_diary['lunch'] = "< Not Entered Yet >"
+    if food_diary['dinner'] == "":
+        food_diary['dinner'] = "< Not Entered Yet >"
+    if food_diary['dinner'] == "":
+        food_diary['dinner'] = "< Not Entered Yet >" 
+    return food_diary
