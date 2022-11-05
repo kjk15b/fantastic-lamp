@@ -358,10 +358,20 @@ def figure_search_plot(start : str, stop : str):
 	for weight in weights:
 		xs.append(weight.tstamp)
 		ys.append(weight.weight)
-	ax.plot(xs, ys, '--')
-	ax.scatter(xs, ys)
+	payload = {}
+	for i in range(len(xs)):
+		# Collect all the data into a dictionary
+		payload[xs[i]] = ys[i]
+	out_time = sorted(payload.keys(), reverse=False)
+	out_val = []
+	for t in out_time:
+		out_val.append(payload[t])
+	print(out_time)
+	print(out_val)
+	ax.plot(out_time, out_val, '--')
+	ax.scatter(out_time, out_val)
 	ax.tick_params(axis='x', rotation=45)
-	ax.set_title('Time Range from {} to {}'.format(xs[0], xs[len(xs)-1]))
+	ax.set_title('Time Range from {} to {}'.format(out_time[0], out_time[len(out_time)-1]))
 	ax.set_ylabel('Weight [lbs]')
 	output = BytesIO()
 	FigureCanvas(fig).print_png(output)
@@ -395,10 +405,20 @@ def figure_plot():
 		for weight in weights:
 			xs.append(weight.tstamp)
 			ys.append(weight.weight)
-		ax.plot(xs, ys, '--')
-		ax.scatter(xs, ys)
+		payload = {}
+		for i in range(len(xs)):
+		# Collect all the data into a dictionary
+			payload[xs[i]] = ys[i]
+		out_time = sorted(payload.keys(), reverse=False)
+		out_val = []
+		for t in out_time:
+			out_val.append(payload[t])
+		print(out_time)
+		print(out_val)
+		ax.plot(out_time, out_val, '--')
+		ax.scatter(out_time, out_val)
 		ax.tick_params(axis='x', rotation=45)
-		ax.set_title('Time Range from {} to {}'.format(xs[0], xs[len(xs)-1]))
+		ax.set_title('Time Range from {} to {}'.format(out_time[0], out_time[len(out_time)-1]))
 		ax.set_ylabel('Weight [lbs]')
 	output = BytesIO()
 	FigureCanvas(fig).print_png(output)
