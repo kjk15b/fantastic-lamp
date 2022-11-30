@@ -1,4 +1,4 @@
-from app.models import Food_Diary, Recipe, Quote, Project, Weight
+from app.models import Food_Diary, Recipe, Quote, Project, Weight, Book
 import datetime
 import requests
 from app import db
@@ -248,6 +248,25 @@ def bulk_upload_to_database(db_data : dict):
 		                s_cal=float(food_diary['s_cal']),
 		                tstamp=food_diary['tstamp'])
                     db.session.add(fd)
+                    db.session.commit()
+        
+        elif table == 'books':
+            for book in db_data[table]:
+                print(book)
+                is_in = Book.query.filter_by(title=book['title']).first()
+                if type(is_in) != Book:
+                    b = Book(
+                    title=book['title'],
+					author=book['author'],
+					owned=book['owned'],
+					have_read=book['have_read'],
+					rating=book['rating'],
+					is_series=book['is_series'],
+					no_in_series=book['no_in_series'],
+					tags=book['tags']
+                    )
+                    print("Found new book: {}, updating now!".format(b.title))
+                    db.session.add(b)
                     db.session.commit()
     pass
 

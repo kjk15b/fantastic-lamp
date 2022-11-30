@@ -272,14 +272,17 @@ def export_db():
 	projects = process_all_projects(Project.query.all())
 	weights = process_all_weights(Weight.query.all())
 	food_diaries = process_all_diaries(Food_Diary.query.all())
+	books = book_to_dict(Book.query.all())
 	print(recipes, ' : ', type(recipes))
 	print(projects, ' : ', type(projects))
 	print(weights, ' : ', type(weights))
+	print(books, ' : ', type(books))
 	payload = {
 		'recipes' : recipes,
 		'projects' : projects,
 		'weights' : weights,
-		'food_diary' : food_diaries
+		'food_diary' : food_diaries,
+		'books' : books
 	}
 	response = make_response(jsonify(payload))
 	now = datetime.datetime.now()
