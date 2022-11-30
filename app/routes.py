@@ -1,7 +1,7 @@
 from flask import jsonify, render_template, Response, request, redirect, url_for, make_response
 from app import app
 from app.api_utils import bulk_upload_to_database, get_past_week, get_weights_by_time, process_all_diaries, process_all_weights, process_food_diary, process_recipe_form, to_dict, search_recipe, handle_quote_of_day, process_all_projects, process_all_recipes
-from app.models import Project, Recipe, Weight, Food_Diary
+from app.models import Project, Recipe, Weight, Food_Diary, Book
 from app import db
 import datetime
 import json
@@ -48,7 +48,7 @@ def recipes():
                             quote=handle_quote_of_day(),
                             notform=True,
                             recipe=recipe,
-							num_recipes=num_recipes)
+							num_recipes=num_recipes, recipe_list=recipes)
 
 @app.route('/recipes/search')
 def recipes_search():
@@ -521,3 +521,168 @@ def api_food_diary_update():
 			})
 	db.session.commit()
 	return redirect(url_for('food_diary_update'))
+
+def book_convert_tags(book_entry : dict):
+	taglist = []
+	keys = book_entry.keys()
+	tagstr = ''
+	for key in keys:
+		if 'tag' in key:
+			taglist.append(book_entry[key])
+	for i in range(len(taglist)):
+		if i == len(taglist) - 1:
+			tagstr += taglist[i]
+		else:
+			tagstr += taglist[i] + ', '
+	return tagstr
+
+def book_check_for_empty(book : dict):
+	book_entry = {
+		'title' : book['title'],
+		'author' : book['author'],
+		'owned' : book['owned'],
+		'have_read' : book['have_read'],
+		'rating' : book['rating'],
+		'is_series' : book['is_series'],
+		'no_in_series' : book['no_in_series'],
+		'tags' : book['tags']
+	}
+	for key in book_entry.keys():
+		if book_entry[key] == '':
+			if key == 'rating' or 'no_in_series':
+				book[key] = 0
+			elif key == 'owned' or 'have_read' or 'is_series':
+				book[key] = 'False'
+			else:
+				book[key] = 'NONE'
+	return book 
+
+@app.route('/bookworm')
+def book_home():
+	books = Book.query.all()
+	return render_template('frontpage.html',
+                           page_title='Bookworms-R-Us! 📖',
+                           page_description='A library for a little book worm!',
+						   no_of_books=len(books),
+						   books=books, method='none')
+
+@app.route('/bookworm/add-book')
+def add_book():
+	return render_template('add-book.html',
+						   page_title='Add a New Book! 📖',
+                           page_description='Always better to have more books!',
+						   method='add')
+
+@app.route('/bookworm/update-book', methods=['POST'])
+def update_book():
+	return render_template('add-book.html',
+						   page_title='Update a Book! 📖',
+                           page_description='Make sure that everything is in its place!',
+						   method='update',
+						   book=request.form.to_dict())
+
+@app.route('/bookworm/search')
+def search_book():
+	return render_template('add-book.html',
+						   page_title='Search for a Book! 📖',
+                           page_description='Hope you find something good!',
+						   method='search')
+
+@app.route('/bookworm/search-results', methods=['POST'])
+def search_results():
+	content = request.form.to_dict()
+	content['tags'] = book_convert_tags(content)
+	tags = content['tags']
+	taglist = tags.split(',')
+	book_list = []
+	books = Book.query.all()
+	for book in books:
+		print(book)
+		found_by_tag = False
+		for tag in taglist:
+			if tag.lower() in book.tags.lower() and tag != '':
+				print("Adding {} to list from {}".format(book, tag))
+				book_list.append(book)
+				found_by_tag = True
+				break
+		if book.title.lower() == content['title'].lower() or \
+			book.author.lower() == content['author'].lower() or \
+				book.owned == content['owned'] or \
+					book.have_read == content['have_read'] or \
+						book.rating == content['rating'] or \
+							book.is_series == content['is_series'] or \
+								book.no_in_series == content['no_in_series'] and not found_by_tag:
+				book_list.append(book)
+				print("Adding {} to list from {}".format(book, content))
+				continue
+	print(book_list)
+	return render_template('frontpage.html',
+                           page_title='Bookworms-R-Us! 📖',
+                           page_description='Search Results Away!',
+						   no_of_books=len(book_list),
+						   books=book_list, method='search')
+
+@app.route('/api/update/book', methods=['POST'])
+def api_update_book():
+	book = request.form.to_dict()
+	book['tags'] = book_convert_tags(book)
+	book = book_check_for_empty(book)
+	db.session.query(Book). \
+		filter(Book.title == str(book['title'])). \
+			update({
+				'title' : book['title'],
+				'author' : book['author'],
+				'owned' : book['owned'],
+				'have_read' : book['have_read'],
+				'rating' : book['rating'],
+				'is_series' : book['is_series'],
+				'no_in_series' : book['no_in_series'],
+				'tags' : book['tags']
+			})
+	db.session.commit()
+	return redirect(url_for('book_home'))
+
+@app.route('/api/delete/book', methods=['POST'])
+def api_delete_book():
+	book = request.form.to_dict()
+	book_entry = Book.query.filter_by(title=book['title']).first()
+	print(book)
+	db.session.delete(book_entry)
+	db.session.commit()
+	return redirect(url_for('book_home'))
+
+@app.route('/api/add/book', methods=['POST'])
+def api_add_book():
+	book = request.form.to_dict()
+	book['tags'] = book_convert_tags(book)
+	book = book_check_for_empty(book)
+	print(book)
+	book_entry = Book(title=book['title'],
+		author=book['author'],
+		owned=book['owned'],
+		have_read=book['have_read'],
+		rating=book['rating'],
+		is_series=book['is_series'],
+		no_in_series=book['no_in_series'],
+		tags=book['tags'])
+		
+	db.session.add(book_entry)
+	db.session.commit()
+	return redirect(url_for('book_home'))
+
+
+def book_to_dict(books : list):
+	book_list = []
+	for book in books:
+		print(book)
+		book_list.append({
+			'title' : book.title,
+			'author' : book.author,
+			'owned' : book.owned,
+			'have_read' : book.have_read,
+			'rating' : book.rating,
+			'is_series' : book.is_series,
+			'no_in_series' : book.no_in_series,
+			'tags' : book.tags 
+		})
+	return book_list

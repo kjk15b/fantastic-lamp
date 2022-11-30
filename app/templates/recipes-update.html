@@ -56,15 +56,6 @@ input[type=submit]:hover {
     margin-top: 0;
   }
 }
-/*
-table, th, td {
-  border: 1px solid rgb(118, 50, 124);
-}
-
-th, td {
-  padding: 10px;
-}
-*/
 </style>
 
 <!-- First Grid -->
@@ -74,14 +65,15 @@ th, td {
         <div class="container">
             <form action="/recipes/update/recipe" method="post">
                 <table>
-                        <th>
+                        <thead>
                             <tr>
-                                <td>Recipe Name</td>
-                                <td>Serving Size</td>
-                                <td>Notes</td>
+                                <th>Recipe Name</th>
+                                <th>Serving Size</th>
+                                <th>Notes</th>
                             </tr>
-                        </th>
+                        </thead>
                         {% for recipe in recipes %}
+                        <tbody>
                         <tr>
                             <td>
                                 <input type="radio" id="recipe_name" name="recipe_name" value="{{ recipe.recipe_name }}">
@@ -91,6 +83,7 @@ th, td {
                             <td>{{ recipe.notes }}</td>
                         </tr>
                         {% endfor %}
+                        </tbody>
                 </table>
                 <div class="row">
                     <input type="submit" value="Update">

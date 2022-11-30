@@ -28,16 +28,17 @@
         <h1>Results</h1>
         <div class="container">
               <table>
-                    <th>
+                    <thead>
                         <tr>
-                            <td>Recipe Name</td>
-                            <td>Servings</td>
-                            <td>Prep Time</td>
-                            <td>Total Time</td>
-                            <td>Notes</td>
-                            <td>Link</td>
+                            <th>Recipe Name</th>
+                            <th>Servings</th>
+                            <th>Prep Time</th>
+                            <th>Total Time</th>
+                            <th>Notes</th>
+                            <th>Link</th>
                         </tr>
-                      </th>
+                      </thead>
+                      <tbody>
                       {% for recipe in recipes %}
                       <tr>
                             <td>{{ recipe.recipe_name }}</td>
@@ -56,6 +57,7 @@
                             </td>
                         </tr>
                         {% endfor %}
+                      </tbody>
                 </table>
           </div>
     </div>

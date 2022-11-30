@@ -1,7 +1,65 @@
 {%extends "base.html" %}
 {%block content%}
-  
+<head>
+  <style>
+      #pagination-demo li {  display: inline-block;  }  
+  </style>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">  
+<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+  <script>
+      $(document).ready(function(){
+          $("#search_recipe").on("keyup", function() {
+          var value = $(this).val().toLowerCase();
+          $("#tbody tr").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+  });
+});
+});
+  </script>
+</head>
 <!-- First Grid -->
+{% if num_recipes > 0 %}
+<div class="w3-row-padding w3-padding-64 w3-container">
+  <div class="w3-content">
+    <p>Search and filter recipes below:</p>  
+    <input id="search_recipe" type="text" placeholder="keto">
+    <br><br>
+    <div class="w3-twothird">
+      <table>
+        <thead>
+          <tr>
+            <th>Recipe Name</th>
+            <th>Servings</th>
+            <th>Prep Time</th>
+            <th>Cook Time</th>
+            <th>Link</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          {% for r in recipe_list %}
+          <tr>
+            <td>{{ r.recipe_name }}</td>
+            <td>{{ r.servings }}</td>
+            <td>{{ r.prep_time }}</td>
+            <td>{{ r.cook_time }}</td>
+            <td>
+              <form action="/recipe/view" method="post">
+                <input type="hidden" name="servings" id="servings" value="{{ r.servings }}">
+                <input type="hidden" name="prep_time" id="prep_time" value="{{ r.prep_time }}">
+                <input type="hidden" name="cook_time" id="cook_time" value="{{ r.cook_time }}">
+                <input type="hidden" name="ingredients" id="ingredients" value="{{ r.ingredients }}">
+                <input type="hidden" name="recipe_name" id="recipe_name" value="{{ r.recipe_name }}">
+                <input type="submit" value="View">               
+              </form>
+            </td> 
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% if num_recipes > 0 %}
 <div class="w3-row-padding w3-padding-64 w3-container">
     <div class="w3-content">

@@ -7,19 +7,20 @@
     <div class="w3-content">
       <div class="w3-twothird">
             <table>
-                <th>
+                <thead>
                     <tr>
-                        <td>Date</td>
-                        <td>Breakfast</td>
-                        <td>Calories</td>
-                        <td>Lunch</td>
-                        <td>Calories</td>
-                        <td>Dinner</td>
-                        <td>Calories</td>
-                        <td>Snack</td>
-                        <td>Calories</td>
+                        <th>Date</th>
+                        <th>Breakfast</th>
+                        <th>Calories</th>
+                        <th>Lunch</th>
+                        <th>Calories</th>
+                        <th>Dinner</th>
+                        <th>Calories</th>
+                        <th>Snack</th>
+                        <th>Calories</th>
                     </tr>
-                  </th>
+                  </thead>
+                  <tbody>
                   <tr>
                         <td>{{ food_diary.tstamp }}</td>
                         <td>{{ food_diary.breakfast }}</td>
@@ -32,6 +33,7 @@
                         <td>{{ food_diary.s_cal }}</td>
                         <td>
                     </tr>
+                  </tbody>
             </table>
       </div>
     </div>

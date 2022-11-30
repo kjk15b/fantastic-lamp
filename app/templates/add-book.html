@@ -1,0 +1,173 @@
+{% extends "index.html" %}
+{% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="/static/add_form.js"></script>
+<div class="hipsum">
+    {% if method == 'add' %}
+    <form action="/api/add/book" method="post">
+        <label for="title">Title: </label>
+        <input type="text" id="title" name="title" placeholder="The Great Gatsby">
+        <br>
+        <label for="author">Author: </label>
+        <input type="text" id="author" name="author" placeholder="F. Scott Fitzgerald">
+        <br>
+        <label for="owned">Owned: </label>
+        <select name="owned" id="owned">
+            <option value="True">True</option>
+            <option value="False">False</option>
+        </select>
+        <br>
+        <label for="have_read">Read: </label>
+        <select name="have_read" id="have_read">
+            <option value="True">True</option>
+            <option value="False">False</option>
+        </select>
+        <br>
+        <label for="rating">Rating: </label>
+        <input type="number" id="rating" name="rating" min="0" max="5">
+        <br>
+        <label for="is_series">Part of a Series: </label>
+        <select name="is_series" id="is_series">
+            <option value="True">True</option>
+            <option value="False">False</option>
+        </select>
+        <br>
+        <label for="no_in_series">Number in Series: </label>
+        <input type="number" id="no_in_series" name="no_in_series" min="0">
+        <br>
+        <div class="col-75 container-tag">
+            <div>
+                <label for="tag_1">Tag(s): </label>
+                <input type="text" id="tag_1" name="tag_1" placeholder="Romance">
+            </div>
+            <button type="button" class="add_form_field_tag">Add Additional Tag &nbsp; 
+              <span style="font-size:16px; font-weight:bold;"></span>
+            </button>
+        </div>
+        <!--<label for="author">ISBN: </label>-->
+        <input type="hidden" id="isbn" name="isbn" placeholder="9780333791035">
+        <br>
+        <br>
+        <input type="submit" value="Add to a Wonderful Library">
+    </form>
+</div>
+    {% elif method == 'update' %}
+<div>
+    <form action="/api/update/book" method="post">
+        <label for="title">Title: </label>
+        <input type="text" id="title" name="title" placeholder="{{ book.title }}"><p>Orignal: {{ book.title }}</p>
+        <br>
+        <label for="author">Author: </label>
+        <input type="text" id="author" name="author" placeholder="{{ book.author }}"><p>Orignal: {{ book.author }}</p>
+        <br>
+        <label for="owned">Owned: </label>
+        <select name="owned" id="owned">
+            <option selected="True" value="True">True</option>
+            <option value="False">False</option>
+        </select>
+        <p>Orignal: {{ book.owned }}</p>
+        <br>
+        <label for="have_read">Read: </label>
+        <select name="have_read" id="have_read">
+            <option value="True">True</option>
+            <option value="False">False</option>
+        </select>
+        <p>Orignal: {{ book.have_read }}</p>
+        <br>
+        <label for="rating">Rating: </label>
+        <input type="number" id="rating" name="rating" min="0" max="5">
+        <p>Orignal: {{ book.rating }}</p>
+        <br>
+        <label for="is_series">Is a Series: </label>
+        <select name="is_series" id="is_series">
+            <option value="True">True</option>
+            <option value="False">False</option>
+        </select>
+        <p>Orignal: {{ book.is_series }}</p>
+        <br>
+        <label for="no_in_series">Number in Series: </label>
+        <input type="number" id="no_in_series" name="no_in_series" min="0">
+        <p>Orignal: {{ book.no_in_series }}</p>
+        <br>
+        <div class="col-75 container-tag">
+            <div>
+                <label for="tag_1">Tag(s): </label>
+                <input type="text" id="tag_1" name="tag_1" placeholder="Romance">
+                <p>Orignal: {{ book.tags }}</p>
+            </div>
+            <button type="button" class="add_form_field_tag">Add Additional Tag &nbsp; 
+              <span style="font-size:16px; font-weight:bold;"></span>
+            </button>
+        </div>
+        <!--<label for="author">ISBN: </label>-->
+        <input type="hidden" id="isbn" name="isbn" placeholder="9780333791035">
+        <br>
+        <br>
+        <input type="submit" value="Update this Entry!">
+    </form>
+    <br>
+    <br>
+    <form action="/api/delete/book" method="post">
+        <input type="hidden" id="title" name="title" value="{{book.title}}">
+        <input type="hidden" id="author" name="author" value="{{book.author}}">
+        <input type="hidden" id="owned" name="owned" value="{{book.owned}}">
+        <input type="hidden" id="is_series" name="is_series" value="{{book.is_series}}">
+        <input type="hidden" id="no_in_series" name="no_in_series" value="{{book.no_in_series}}">
+        <input type="hidden" id="have_read" name="have_read" value="{{book.have_read}}">
+        <input type="hidden" id="tags" name="tags" value="{{book.tags}}">
+        <input type="hidden" id="rating" name="rating" value="{{book.rating}}">
+        <input type="submit" value="Delete Entry" color="red">
+    </form>
+    {% elif method == 'search' %}
+    <form action="/search-results" method="post">
+        <label for="title">Title: </label>
+        <input type="text" id="title" name="title" placeholder="The Great Gatsby">
+        <br>
+        <label for="author">Author: </label>
+        <input type="text" id="author" name="author" placeholder="F. Scott Fitzgerald">
+        <br>
+        <label for="owned">Owned: </label>
+        <select name="owned" id="owned">
+            <option value="True">True</option>
+            <option value="False">False</option>
+        </select>
+        <br>
+        <label for="have_read">Read: </label>
+        <select name="have_read" id="have_read">
+            <option value="True">True</option>
+            <option value="False">False</option>
+        </select>
+        <br>
+        <label for="rating">Rating: </label>
+        <input type="number" id="rating" name="rating" min="0" max="5">
+        <br>
+        <label for="is_series">Part of a Series: </label>
+        <select name="is_series" id="is_series">
+            <option value="True">True</option>
+            <option value="False">False</option>
+        </select>
+        <br>
+        <label for="no_in_series">Number in Series: </label>
+        <input type="number" id="no_in_series" name="no_in_series" min="0">
+        <br>
+        <div class="col-75 container-tag">
+            <div>
+                <label for="tag_1">Tag(s): </label>
+                <input type="text" id="tag_1" name="tag_1" placeholder="Romance">
+            </div>
+            <button type="button" class="add_form_field_tag">Add Additional Tag &nbsp; 
+              <span style="font-size:16px; font-weight:bold;"></span>
+            </button>
+        </div>
+        <!--<label for="author">ISBN: </label>-->
+        <input type="hidden" id="isbn" name="isbn" placeholder="9780333791035">
+        <br>
+        <br>
+        <input type="submit" value="Search for Something Spectacular">
+    </form>
+</div>
+    {% endif %}
+</div>
+
+
+{% endblock %}

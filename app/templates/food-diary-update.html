@@ -8,20 +8,21 @@
       <div class="w3-twothird">
         <hr>
             <table>
-                <th>
+                <thead>
                     <tr>
-                        <td>Date</td>
-                        <td>Breakfast</td>
-                        <td>Calories</td>
-                        <td>Lunch</td>
-                        <td>Calories</td>
-                        <td>Dinner</td>
-                        <td>Calories</td>
-                        <td>Snack</td>
-                        <td>Calories</td>
-                        <td>Link</td>
+                        <th>Date</th>
+                        <th>Breakfast</th>
+                        <th>Calories</th>
+                        <th>Lunch</th>
+                        <th>Calories</th>
+                        <th>Dinner</th>
+                        <th>Calories</th>
+                        <th>Snack</th>
+                        <th>Calories</th>
+                        <th>Link</th>
                     </tr>
-                  </th>
+                  </thead>
+                  <tbody>
                   {% for food_diary in food_diaries %}
                   <tr>
                     <td>{{ food_diary.tstamp }}</td>
@@ -49,6 +50,7 @@
                         </td>
                     </tr>
                     {% endfor %}
+                  </tbody>
             </table>
       </div>
       <hr>

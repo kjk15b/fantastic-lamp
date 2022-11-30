@@ -1,0 +1,97 @@
+{%extends "index.html" %}
+{%block content%}
+<style>
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: center;
+  padding: 2px;
+}
+
+
+tr:hover {background-color: #e9a3da;}
+tr {
+  background-color: #ffffff;
+}
+</style>
+<head>
+  <style>
+      #pagination-demo li {  display: inline-block;  }  
+  </style>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">  
+<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+  <script>
+      $(document).ready(function(){
+          $("#search_book").on("keyup", function() {
+          var value = $(this).val().toLowerCase();
+          $("#tbody tr").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+  });
+});
+});
+  </script>
+</head>
+{% if no_of_books > 0 %}
+    <div class="hipsum">
+      <p>Search and filter books below:</p>  
+      <input id="search_book" type="text" placeholder="Fitzgerald">
+      <br><br>
+      <table id="mytable" border="1" cellpadding="3">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Owned?</th>
+            <th>Is a Series?</th>
+            <th>No. in Series</th>
+            <th>Read?</th>
+            <th>Tags</th>
+            <th>Rating</th>
+            <!--<th>ISBN</th>-->
+            <th>Update</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          {% for book in books %}
+          <tr>
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>{{ book.owned }}</td>
+            <td>{{ book.is_series }}</td>
+            <td>{{ book.no_in_series }}</td>
+            <td>{{ book.have_read }}</td>
+            <td>{{ book.tags }}</td>
+            <td>{{ book.rating }}</td>
+            <!--<td>{{ book.isbn }}</td>-->
+            <td>
+                <form action="/bookworm/update-book" method="post">
+                    <input type="hidden" id="title" name="title" value="{{book.title}}">
+                    <input type="hidden" id="author" name="author" value="{{book.author}}">
+                    <input type="hidden" id="owned" name="owned" value="{{book.owned}}">
+                    <input type="hidden" id="is_series" name="is_series" value="{{book.is_series}}">
+                    <input type="hidden" id="no_in_series" name="no_in_series" value="{{book.no_in_series}}">
+                    <input type="hidden" id="have_read" name="have_read" value="{{book.have_read}}">
+                    <input type="hidden" id="tags" name="tags" value="{{book.tags}}">
+                    <input type="hidden" id="rating" name="rating" value="{{book.rating}}">
+                    <input type="submit" value="Update">
+                </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% elif method == 'search' %}
+    <div class="hipsum">
+        <p>No results can be found, sorry!</p>
+      </div>  
+    {% elif no_of_books == 0 %}
+    <div class="hipsum">
+      <p>No books have been added to this library yet!</p>
+    </div>
+    {% endif %}
+
+{% endblock %}

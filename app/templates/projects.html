@@ -1,22 +1,45 @@
 {%extends "base.html" %}
 {%block content%}
-{% for project in projects %}
+<head>
+    <style>
+        #pagination-demo li {  display: inline-block;  }  
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">  
+  <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#search_project").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#tbody tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+  });
+    </script>
+  </head>
 <div class="w3-row-padding w3-padding-64 w3-container">
     <div class="w3-content">
-      <div class="w3-twothird">
-            <h1 class="w3-padding-32">{{ project.name }}</h5>
-            <hr>
-        </div>
-        <hr>
-        <div class="w3-twothird">
-            <h1 class="w3-padding-32">Description</h1>
-            <p class="w3-text-grey">{{ project.desc }}</p>
-        </div>
-        <div class="w3-twothird">
-            <h1 class="w3-padding-32">Estimated Completion</h1>
-            <p class="w3-text-grey">{{ project.est_comp }}</p>
-        </div>
+        <p>Search and filter recipes below:</p>  
+        <input id="search_project" type="text" placeholder="color">
+        <br><br>
+        <table>
+            <thead>
+                <tr>
+                    <th>Project Name</th>
+                    <th>Description</th>
+                    <th>Completion Date</th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+            {% for project in projects %}
+                <tr>
+                    <td>{{ project.name }}</td>
+                    <td>{{ project.desc }}</td>
+                    <td>{{ project.est_comp }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
-  </div>
-  {% endfor %}
+</div>
 {% endblock %}
