@@ -1,7 +1,5 @@
 {% extends "index.html" %}
 {% block content %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="/static/add_form.js"></script>
 <div class="hipsum">
     {% if method == 'add' %}
     <form action="/api/add/book" method="post">
@@ -119,7 +117,7 @@
         <input type="submit" value="Delete Entry" color="red">
     </form>
     {% elif method == 'search' %}
-    <form action="/search-results" method="post">
+    <form action="/bookworm/search-results" method="post">
         <label for="title">Title: </label>
         <input type="text" id="title" name="title" placeholder="The Great Gatsby">
         <br>

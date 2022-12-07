@@ -45,3 +45,28 @@ $(document).ready(function() {
         x--;
 })
 });
+
+
+$(document).ready(function() {
+        var max_fields = 10;
+        var wrapper = $(".container-tag");
+        var add_button = $(".add_form_field_tag");
+        var x = 1;
+        $(add_button).click(function(e) {
+            e.preventDefault();
+            if (x < max_fields) {
+                    x++;
+                    //var div_str = '<div><input type="textarea" name="step_'+x+'"/><a href="#" class="delete">Delete</a></div>'
+                    var div_str = '<div><input type="text" name="tag_'+x+'" placeholder="Mystery..."/><a href="#" class="delete">Delete</a></div>'
+            $(wrapper).append(div_str); //add input box
+            } else {
+                    alert('You Reached the limits')
+            }
+        });
+    
+        $(wrapper).on("click", ".delete", function(e) {
+            e.preventDefault();
+            $(this).parent('div').remove();
+            x--;
+    })
+    });
